@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QArt - Modern QR Code Generator Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: #eaeaea;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #888;
+      margin-bottom: 3rem;
+      font-size: 1.1rem;
+    }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #aaa;
+    }
+    .qr-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    label {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    input, select {
+      padding: 0.625rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .code-block {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.75rem;
+      overflow-x: auto;
+      color: #a0d0a0;
+    }
+    .code-block .keyword { color: #c792ea; }
+    .code-block .string { color: #ecc48d; }
+    .code-block .comment { color: #546e7a; }
+    .code-block .function { color: #82aaff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>QArt</h1>
+    <p class="subtitle">Modern, Highly Customizable QR Code Generator</p>
+    
+    <div class="demo-grid">
+      <!-- Gradient QR -->
+      <div class="card">
+        <h3>Gradient Dots</h3>
+        <div class="qr-container" id="qr-gradient"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="grad-data" value="https://github.com/umutkamanoglu/qart">
+          </div>
+          <button onclick="renderGradient()">Generate</button>
+        </div>
+      </div>
+
+      <!-- Rounded Dots -->
+      <div class="card">
+        <h3>Rounded Dots</h3>
+        <div class="qr-container" id="qr-rounded"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="round-data" value="https://example.com">
+          </div>
+          <button onclick="renderRounded()">Generate</button>
+        </div>
+      </div>
+
+      <!-- Custom Colors -->
+      <div class="card">
+        <h3>Custom Colors</h3>
+        <div class="qr-container" id="qr-colors"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="color-data" value="Hello QArt!">
+          </div>
+          <div class="control-group">
+            <label>Dot Color</label>
+            <input type="color" id="dot-color" value="#667eea">
+          </div>
+          <div class="control-group">
+            <label>Background</label>
+            <input type="color" id="bg-color" value="#1a1a2e">
+          </div>
+          <button onclick="renderColors()">Generate</button>
+        </div>
+      </div>
+
+      <!-- With Frame -->
+      <div class="card">
+        <h3>With Frame Text</h3>
+        <div class="qr-container" id="qr-frame"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="frame-data" value="Scan Me!">
+          </div>
+          <div class="control-group">
+            <label>Frame Text</label>
+            <input type="text" id="frame-text" value="SCAN ME">
+          </div>
+          <button onclick="renderFrame()">Generate</button>
+        </div>
+      </div>
+
+      <!-- Pattern Background -->
+      <div class="card">
+        <h3>Pattern Background</h3>
+        <div class="qr-container" id="qr-pattern"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="pattern-data" value="Pattern BG">
+          </div>
+          <div class="control-group">
+            <label>Pattern</label>
+            <select id="pattern-type">
+              <option value="dots">Dots</option>
+              <option value="lines">Lines</option>
+              <option value="grid">Grid</option>
+              <option value="diagonal">Diagonal</option>
+              <option value="cross">Cross</option>
+            </select>
+          </div>
+          <button onclick="renderPattern()">Generate</button>
+        </div>
+      </div>
+
+      <!-- SVG Output -->
+      <div class="card">
+        <h3>SVG Output</h3>
+        <div class="qr-container" id="qr-svg"></div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Data</label>
+            <input type="text" id="svg-data" value="SVG Format">
+          </div>
+          <button onclick="renderSVG()">Generate</button>
+          <button onclick="downloadSVG()" style="background: #28a745;">Download SVG</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Code -->
+    <div style="margin-top: 3rem;">
+      <h3 style="margin-bottom: 1rem; color: #aaa;">Usage Example</h3>
+      <div class="code-block">
+        <span class="keyword">import</span> { QArt } <span class="keyword">from</span> <span class="string">'qart'</span>;
+        
+        <span class="keyword">const</span> qr = <span class="keyword">new</span> QArt({
+          <span class="function">data</span>: <span class="string">'https://example.com'</span>,
+          <span class="function">width</span>: <span class="string">300</span>,
+          <span class="function">height</span>: <span class="string">300</span>,
+          <span class="function">dotsOptions</span>: {
+            <span class="function">type</span>: <span class="string">'rounded'</span>,
+            <span class="function">gradient</span>: {
+              <span class="function">type</span>: <span class="string">'linear'</span>,
+              <span class="function">rotation</span>: Math.PI / 4,
+              <span class="function">colorStops</span>: [
+                { <span class="function">offset</span>: 0, <span class="function">color</span>: <span class="string">'#667eea'</span> },
+                { <span class="function">offset</span>: 1, <span class="function">color</span>: <span class="string">'#764ba2'</span> }
+              ]
+            }
+          },
+          <span class="function">backgroundOptions</span>: {
+            <span class="function">color</span>: <span class="string">'#1a1a2e'</span>
+          },
+          <span class="function">cornersSquareOptions</span>: {
+            <span class="function">type</span>: <span class="string">'rounded'</span>,
+            <span class="function">color</span>: <span class="string">'#667eea'</span>
+          }
+        });
+        
+        qr.<span class="function">append</span>(document.getElementById(<span class="string">'container'</span>));
+        <span class="keyword">await</span> qr.<span class="function">download</span>({ <span class="function">name</span>: <span class="string">'my-qr'</span>, <span class="function">extension</span>: <span class="string">'png'</span> });
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { QArt } from './dist/qart.esm.js';
+
+    // Gradient QR
+    function renderGradient() {
+      const data = document.getElementById('grad-data').value;
+      const qr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        dotsOptions: {
+          type: 'rounded',
+          gradient: {
+            type: 'linear',
+            rotation: Math.PI / 4,
+            colorStops: [
+              { offset: 0, color: '#667eea' },
+              { offset: 1, color: '#764ba2' }
+            ]
+          }
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          gradient: {
+            type: 'linear',
+            colorStops: [
+              { offset: 0, color: '#667eea' },
+              { offset: 1, color: '#764ba2' }
+            ]
+          }
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: '#667eea'
+        },
+        backgroundOptions: {
+          color: '#1a1a2e'
+        }
+      });
+      qr.append(document.getElementById('qr-gradient'));
+    }
+
+    // Rounded Dots
+    function renderRounded() {
+      const data = document.getElementById('round-data').value;
+      const qr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        dotsOptions: {
+          type: 'rounded',
+          color: '#667eea'
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          color: '#667eea'
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: '#764ba2'
+        },
+        backgroundOptions: {
+          color: '#ffffff'
+        }
+      });
+      qr.append(document.getElementById('qr-rounded'));
+    }
+
+    // Custom Colors
+    function renderColors() {
+      const data = document.getElementById('color-data').value;
+      const dotColor = document.getElementById('dot-color').value;
+      const bgColor = document.getElementById('bg-color').value;
+      const qr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        dotsOptions: {
+          type: 'dots',
+          color: dotColor
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          color: dotColor
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: dotColor
+        },
+        backgroundOptions: {
+          color: bgColor
+        }
+      });
+      qr.append(document.getElementById('qr-colors'));
+    }
+
+    // Frame
+    function renderFrame() {
+      const data = document.getElementById('frame-data').value;
+      const frameText = document.getElementById('frame-text').value;
+      const qr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        dotsOptions: {
+          type: 'classy',
+          color: '#1a1a2e'
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          color: '#1a1a2e'
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: '#667eea'
+        },
+        backgroundOptions: {
+          color: '#ffffff'
+        },
+        frameOptions: {
+          text: frameText,
+          color: '#1a1a2e',
+          fontSize: 18,
+          fontWeight: 'bold',
+          backgroundColor: '#f0f0f0',
+          borderRadius: 12,
+          padding: 12,
+          margin: 20
+        }
+      });
+      qr.append(document.getElementById('qr-frame'));
+    }
+
+    // Pattern Background
+    function renderPattern() {
+      const data = document.getElementById('pattern-data').value;
+      const patternType = document.getElementById('pattern-type').value;
+      const qr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        dotsOptions: {
+          type: 'rounded',
+          color: '#1a1a2e'
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          color: '#1a1a2e'
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: '#667eea'
+        },
+        backgroundOptions: {
+          color: '#f8f9fa',
+          pattern: {
+            type: patternType,
+            color: '#667eea',
+            size: 3,
+            spacing: 24,
+            rotation: 0
+          }
+        }
+      });
+      qr.append(document.getElementById('qr-pattern'));
+    }
+
+    // SVG
+    let svgQr = null;
+    async function renderSVG() {
+      const data = document.getElementById('svg-data').value;
+      svgQr = new QArt({
+        data,
+        width: 300,
+        height: 300,
+        type: 'svg',
+        dotsOptions: {
+          type: 'rounded',
+          color: '#667eea'
+        },
+        cornersSquareOptions: {
+          type: 'rounded',
+          color: '#667eea'
+        },
+        cornersDotOptions: {
+          type: 'circle',
+          color: '#764ba2'
+        },
+        backgroundOptions: {
+          color: '#ffffff'
+        }
+      });
+      svgQr.append(document.getElementById('qr-svg'));
+    }
+
+    async function downloadSVG() {
+      if (svgQr) {
+        await svgQr.download({ name: 'qart-svg', extension: 'svg' });
+      }
+    }
+
+    // Initial render
+    renderGradient();
+    renderRounded();
+    renderColors();
+    renderFrame();
+    renderPattern();
+    renderSVG();
+  </script>
+</body>
+</html>
