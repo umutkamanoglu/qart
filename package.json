@@ -1,0 +1,55 @@
+{
+  "name": "qart",
+  "version": "0.1.0",
+  "description": "Modern, highly customizable QR code generator with advanced styling, gradients, patterns, and animations",
+  "main": "dist/qart.umd.js",
+  "module": "dist/qart.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "qr-code",
+    "qr",
+    "qrcode",
+    "generator",
+    "styling",
+    "customizable",
+    "gradient",
+    "pattern",
+    "svg",
+    "canvas"
+  ],
+  "author": "Umut Kamanoglu",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umutkamanoglu/qart.git"
+  },
+  "bugs": {
+    "url": "https://github.com/umutkamanoglu/qart/issues"
+  },
+  "homepage": "https://github.com/umutkamanoglu/qart#readme",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.5.1",
+    "rollup": "^4.9.1",
+    "rollup-plugin-dts": "^6.1.0",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "qrcode-generator": "^1.4.4"
+  }
+}

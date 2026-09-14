@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Source files (not needed in npm package)
+src/
+*.ts
+*.tsx
+rollup.config.js
+tsconfig.json
+jest.config.js
+.gitignore
+README.md
+LICENSE
+
+# Keep only dist/
+!dist/
