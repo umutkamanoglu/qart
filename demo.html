@@ -474,6 +474,15 @@
     renderFrame();
     renderPattern();
     renderSVG();
+
+    // Expose functions to global scope for onclick handlers
+    window.renderGradient = renderGradient;
+    window.renderRounded = renderRounded;
+    window.renderColors = renderColors;
+    window.renderFrame = renderFrame;
+    window.renderPattern = renderPattern;
+    window.renderSVG = renderSVG;
+    window.downloadSVG = downloadSVG;
   </script>
 </body>
 </html>
